@@ -1,443 +1,1516 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
-
+<html lang="fr" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>agentix - PrebuiltUI</title>
-    <link rel="stylesheet" href="./output.css">
-    <link rel="shortcut icon" href="./assets/favicon.png" type="image/x-icon">
+    <title>GenerateX — Everything is Possible</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg: #080b12;
+            --surface: #0e1320;
+            --card: #111827;
+            --border: #1e2a3a;
+            --accent: #00e5ff;
+            --accent2: #7b5cfa;
+            --accent3: #ff6b35;
+            --text: #e8edf5;
+            --muted: #6b7a99;
+            --white: #ffffff;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 16px;
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        /* ── SCROLLBAR ── */
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: var(--accent2); border-radius: 10px; }
+
+        /* ── TYPOGRAPHY ── */
+        h1, h2, h3, h4 { font-family: 'Syne', sans-serif; font-weight: 700; line-height: 1.15; }
+
+        .grad-text {
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* ── GRID NOISE OVERLAY ── */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: 
+                linear-gradient(rgba(0,229,255,0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,229,255,0.02) 1px, transparent 1px);
+            background-size: 48px 48px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* ── NAV ── */
+        nav {
+            position: sticky; top: 0; z-index: 100;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 clamp(20px, 5vw, 80px);
+            height: 70px;
+            background: rgba(8,11,18,0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .nav-logo {
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 1.5rem;
+            color: var(--white);
+            text-decoration: none;
+            display: flex; align-items: center; gap: 8px;
+        }
+
+        .nav-logo span { color: var(--accent); }
+
+        .nav-logo-icon {
+            width: 32px; height: 32px;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 900; font-size: 14px; color: #000;
+        }
+
+        .nav-links { display: flex; align-items: center; gap: 32px; }
+        .nav-links a {
+            color: var(--muted); text-decoration: none; font-size: 0.9rem;
+            font-weight: 500; transition: color .2s; position: relative;
+        }
+        .nav-links a::after {
+            content: ''; position: absolute; bottom: -4px; left: 0;
+            width: 0; height: 2px; background: var(--accent);
+            transition: width .3s;
+        }
+        .nav-links a:hover { color: var(--white); }
+        .nav-links a:hover::after { width: 100%; }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            color: #000; font-weight: 700; font-size: 0.9rem;
+            padding: 10px 24px; border-radius: 8px; border: none;
+            cursor: pointer; text-decoration: none; display: inline-flex;
+            align-items: center; gap: 8px;
+            transition: transform .2s, box-shadow .2s;
+        }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 0 30px rgba(0,229,255,0.35); }
+        .btn-primary:active { transform: scale(0.97); }
+
+        .btn-ghost {
+            background: transparent; color: var(--text); font-weight: 500; font-size: 0.9rem;
+            padding: 10px 24px; border-radius: 8px; border: 1px solid var(--border);
+            cursor: pointer; text-decoration: none; display: inline-flex;
+            align-items: center; gap: 8px;
+            transition: all .2s;
+        }
+        .btn-ghost:hover { border-color: var(--accent); color: var(--accent); background: rgba(0,229,255,0.05); }
+
+        /* ── HAMBURGER ── */
+        .hamburger { display: none; background: none; border: none; cursor: pointer; color: var(--text); padding: 4px; }
+
+        /* ── MOBILE MENU ── */
+        #mobile-menu {
+            display: none; position: fixed; inset: 0; z-index: 200;
+            background: rgba(8,11,18,0.97); backdrop-filter: blur(20px);
+            flex-direction: column; align-items: center; justify-content: center; gap: 32px;
+        }
+        #mobile-menu.open { display: flex; }
+        #mobile-menu a { color: var(--text); text-decoration: none; font-size: 1.4rem; font-family: 'Syne', sans-serif; font-weight: 700; }
+        #mobile-menu a:hover { color: var(--accent); }
+        #close-menu { background: none; border: 1px solid var(--border); color: var(--text); padding: 12px; border-radius: 10px; cursor: pointer; }
+
+        /* ── SECTION WRAPPER ── */
+        .section-inner {
+            max-width: 1200px; margin: 0 auto;
+            padding: 0 clamp(20px, 5vw, 60px);
+        }
+
+        .section-tag {
+            display: inline-flex; align-items: center; gap: 8px;
+            border: 1px solid rgba(0,229,255,0.3); border-radius: 100px;
+            padding: 6px 16px; font-size: 0.8rem; color: var(--accent);
+            font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+            background: rgba(0,229,255,0.05);
+            margin-bottom: 20px;
+        }
+
+        .dot-live { width: 8px; height: 8px; background: #22c55e; border-radius: 50%; animation: pulse 2s infinite; }
+        @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(1.3)} }
+
+        /* ── HERO ── */
+        .hero {
+            position: relative; min-height: 100vh;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            text-align: center; padding: 120px 20px 80px;
+            overflow: hidden;
+        }
+
+        .hero-glow {
+            position: absolute; top: -200px; left: 50%; transform: translateX(-50%);
+            width: 900px; height: 700px;
+            background: radial-gradient(ellipse, rgba(0,229,255,0.12) 0%, rgba(123,92,250,0.08) 40%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .hero-glow2 {
+            position: absolute; bottom: -100px; left: -200px;
+            width: 500px; height: 500px;
+            background: radial-gradient(circle, rgba(123,92,250,0.1) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .hero-title {
+            font-size: clamp(2.8rem, 7vw, 5.5rem);
+            font-weight: 800; max-width: 900px;
+            line-height: 1.05;
+            margin-bottom: 24px;
+        }
+
+        .hero-title em {
+            font-style: normal;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 60%, var(--accent3) 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+
+        .hero-sub {
+            max-width: 580px; color: var(--muted); font-size: 1.1rem;
+            margin-bottom: 40px; font-weight: 300;
+        }
+
+        .hero-cta { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; margin-bottom: 80px; }
+
+        .hero-stats {
+            display: flex; gap: 48px; flex-wrap: wrap; justify-content: center;
+            border-top: 1px solid var(--border); padding-top: 40px;
+            width: 100%; max-width: 700px;
+        }
+
+        .hero-stat { text-align: center; }
+        .hero-stat-num { font-family: 'Syne', sans-serif; font-size: 2rem; font-weight: 800; color: var(--white); }
+        .hero-stat-num span { color: var(--accent); }
+        .hero-stat-label { font-size: 0.8rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+
+        /* ── FLOATING CARDS ── */
+        .floating-badges {
+            position: absolute; top: 50%; left: 5%; transform: translateY(-50%);
+            display: flex; flex-direction: column; gap: 12px;
+            animation: floatLeft 6s ease-in-out infinite;
+        }
+        @keyframes floatLeft { 0%,100%{transform:translateY(-50%) translateX(0)} 50%{transform:translateY(-53%) translateX(-5px)} }
+
+        .floating-badges-right {
+            position: absolute; top: 40%; right: 5%; transform: translateY(-50%);
+            display: flex; flex-direction: column; gap: 12px;
+            animation: floatRight 7s ease-in-out infinite;
+        }
+        @keyframes floatRight { 0%,100%{transform:translateY(-50%) translateX(0)} 50%{transform:translateY(-47%) translateX(5px)} }
+
+        .badge-card {
+            background: rgba(14,19,32,0.9); border: 1px solid var(--border);
+            border-radius: 12px; padding: 12px 16px;
+            display: flex; align-items: center; gap: 10px;
+            font-size: 0.8rem; backdrop-filter: blur(10px);
+            white-space: nowrap;
+        }
+
+        .badge-icon { font-size: 1.2rem; }
+
+        /* ── SERVICES ── */
+        .services { padding: 120px 0; }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px; margin-top: 60px;
+        }
+
+        .service-card {
+            background: var(--card); border: 1px solid var(--border);
+            border-radius: 16px; padding: 32px;
+            position: relative; overflow: hidden;
+            transition: border-color .3s, transform .3s;
+            cursor: default;
+        }
+
+        .service-card::before {
+            content: ''; position: absolute;
+            top: 0; left: 0; right: 0; height: 3px;
+            background: linear-gradient(90deg, var(--accent), var(--accent2));
+            transform: scaleX(0); transition: transform .3s;
+        }
+
+        .service-card:hover { border-color: rgba(0,229,255,0.3); transform: translateY(-4px); }
+        .service-card:hover::before { transform: scaleX(1); }
+
+        .service-icon {
+            width: 52px; height: 52px; border-radius: 14px;
+            background: linear-gradient(135deg, rgba(0,229,255,0.1), rgba(123,92,250,0.1));
+            border: 1px solid rgba(0,229,255,0.2);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem; margin-bottom: 20px;
+        }
+
+        .service-title { font-family: 'Syne', sans-serif; font-size: 1.1rem; margin-bottom: 10px; color: var(--white); }
+        .service-desc { color: var(--muted); font-size: 0.9rem; line-height: 1.65; }
+
+        .service-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
+        .service-tag {
+            font-size: 0.72rem; padding: 4px 12px; border-radius: 100px;
+            background: rgba(123,92,250,0.1); border: 1px solid rgba(123,92,250,0.3);
+            color: #a78bfa; font-weight: 500;
+        }
+
+        /* ── PROCESS ── */
+        .process { padding: 120px 0; background: linear-gradient(180deg, var(--bg), var(--surface), var(--bg)); }
+
+        .process-steps {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 0; margin-top: 70px; position: relative;
+        }
+
+        .process-steps::before {
+            content: ''; position: absolute; top: 36px; left: 5%; right: 5%; height: 1px;
+            background: linear-gradient(90deg, transparent, var(--accent), var(--accent2), transparent);
+        }
+
+        .process-step { text-align: center; padding: 20px; position: relative; z-index: 1; }
+
+        .step-num {
+            width: 72px; height: 72px; border-radius: 50%;
+            background: var(--bg); border: 2px solid var(--accent);
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'Syne', sans-serif; font-size: 1.4rem; font-weight: 800;
+            color: var(--accent); margin: 0 auto 24px;
+            box-shadow: 0 0 30px rgba(0,229,255,0.2);
+        }
+
+        .step-title { font-family: 'Syne', sans-serif; font-size: 1rem; margin-bottom: 10px; color: var(--white); }
+        .step-desc { color: var(--muted); font-size: 0.85rem; }
+
+        /* ── PORTFOLIO ── */
+        .portfolio { padding: 120px 0; }
+
+        .portfolio-tabs {
+            display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 48px; margin-top: 40px;
+        }
+
+        .tab-btn {
+            padding: 8px 20px; border-radius: 8px; border: 1px solid var(--border);
+            background: transparent; color: var(--muted); font-size: 0.85rem;
+            cursor: pointer; transition: all .2s; font-family: 'DM Sans', sans-serif;
+        }
+        .tab-btn.active, .tab-btn:hover {
+            background: rgba(0,229,255,0.08); border-color: var(--accent); color: var(--accent);
+        }
+
+        .portfolio-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        .portfolio-card {
+            border-radius: 16px; overflow: hidden;
+            background: var(--card); border: 1px solid var(--border);
+            group: true; position: relative; transition: transform .3s;
+        }
+
+        .portfolio-card:hover { transform: scale(1.02); }
+        .portfolio-card:first-child { grid-column: span 2; }
+
+        .portfolio-img {
+            width: 100%; aspect-ratio: 16/9; object-fit: cover;
+            display: block; background: linear-gradient(135deg, #1a2540, #0e1320);
+            position: relative; overflow: hidden;
+        }
+
+        .portfolio-mockup {
+            width: 100%; aspect-ratio: 16/9;
+            background: linear-gradient(135deg, #0e1a30, #111827);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 3rem; position: relative; overflow: hidden;
+        }
+
+        .portfolio-mockup::after {
+            content: ''; position: absolute; inset: 0;
+            background: linear-gradient(135deg, rgba(0,229,255,0.05), rgba(123,92,250,0.05));
+        }
+
+        .portfolio-info { padding: 20px; }
+        .portfolio-info h4 { font-family: 'Syne', sans-serif; font-size: 1rem; margin-bottom: 6px; }
+        .portfolio-info p { font-size: 0.82rem; color: var(--muted); }
+
+        .portfolio-cat {
+            font-size: 0.72rem; color: var(--accent2); font-weight: 600;
+            text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px;
+            display: block;
+        }
+
+        /* ── PRICING ── */
+        .pricing { padding: 120px 0; }
+
+        .pricing-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px; margin-top: 60px; align-items: start;
+        }
+
+        .pricing-card {
+            background: var(--card); border: 1px solid var(--border);
+            border-radius: 20px; padding: 36px; position: relative; overflow: hidden;
+        }
+
+        .pricing-card.featured {
+            border-color: rgba(0,229,255,0.4);
+            background: linear-gradient(135deg, rgba(0,229,255,0.04), rgba(123,92,250,0.04));
+        }
+
+        .pricing-card.featured::before {
+            content: 'POPULAIRE';
+            position: absolute; top: 20px; right: 20px;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            color: #000; font-size: 0.65rem; font-weight: 800;
+            padding: 4px 12px; border-radius: 100px; letter-spacing: 0.1em;
+        }
+
+        .pricing-plan { color: var(--muted); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 12px; }
+        .pricing-price { font-family: 'Syne', sans-serif; font-size: 2.5rem; font-weight: 800; color: var(--white); margin-bottom: 4px; }
+        .pricing-price span { font-size: 1rem; color: var(--muted); font-weight: 400; font-family: 'DM Sans', sans-serif; }
+        .pricing-desc { color: var(--muted); font-size: 0.88rem; margin-bottom: 28px; padding-bottom: 28px; border-bottom: 1px solid var(--border); }
+        
+        .pricing-features { list-style: none; display: flex; flex-direction: column; gap: 14px; margin-bottom: 32px; }
+        .pricing-features li { display: flex; align-items: center; gap: 12px; font-size: 0.9rem; }
+        .pricing-features li svg { flex-shrink: 0; }
+
+        /* ── TESTIMONIALS ── */
+        .testimonials { padding: 120px 0; }
+
+        .testi-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px; margin-top: 60px;
+        }
+
+        .testi-card {
+            background: var(--card); border: 1px solid var(--border);
+            border-radius: 16px; padding: 28px;
+            transition: border-color .3s, transform .3s;
+        }
+        .testi-card:hover { border-color: rgba(123,92,250,0.4); transform: translateY(-4px); }
+
+        .stars { display: flex; gap: 4px; margin-bottom: 16px; }
+        .star { color: #f59e0b; font-size: 0.9rem; }
+
+        .testi-text { color: var(--text); font-size: 0.95rem; line-height: 1.7; margin-bottom: 24px; font-style: italic; }
+
+        .testi-author { display: flex; align-items: center; gap: 12px; }
+        .testi-avatar {
+            width: 42px; height: 42px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent2), var(--accent));
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 1rem; color: #fff; flex-shrink: 0;
+        }
+        .testi-name { font-weight: 600; font-size: 0.9rem; color: var(--white); }
+        .testi-role { font-size: 0.8rem; color: var(--accent2); }
+
+        /* ── FAQ ── */
+        .faq { padding: 120px 0; }
+        .faq-list { max-width: 800px; margin: 60px auto 0; display: flex; flex-direction: column; gap: 12px; }
+
+        .faq-item {
+            background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .faq-q {
+            width: 100%; background: none; border: none; color: var(--white);
+            font-family: 'Syne', sans-serif; font-size: 1rem;
+            padding: 20px 24px; text-align: left; cursor: pointer;
+            display: flex; justify-content: space-between; align-items: center;
+            gap: 16px; transition: color .2s;
+        }
+        .faq-q:hover { color: var(--accent); }
+        .faq-q .faq-arrow { transition: transform .3s; flex-shrink: 0; color: var(--accent); }
+        .faq-item.open .faq-q .faq-arrow { transform: rotate(180deg); }
+
+        .faq-a {
+            padding: 0 24px; max-height: 0; overflow: hidden;
+            transition: max-height .4s ease, padding .3s;
+            color: var(--muted); font-size: 0.9rem; line-height: 1.7;
+        }
+        .faq-item.open .faq-a { max-height: 300px; padding-bottom: 20px; }
+
+        /* ── CONTACT ── */
+        .contact { padding: 120px 0; }
+
+        .contact-wrapper {
+            display: grid; grid-template-columns: 1fr 1fr;
+            gap: 60px; margin-top: 60px;
+        }
+
+        .contact-info h3 { font-family: 'Syne', sans-serif; font-size: 1.5rem; margin-bottom: 20px; }
+        .contact-info p { color: var(--muted); margin-bottom: 40px; }
+
+        .contact-items { display: flex; flex-direction: column; gap: 20px; }
+
+        .contact-item {
+            display: flex; align-items: center; gap: 16px;
+        }
+
+        .contact-item-icon {
+            width: 48px; height: 48px; border-radius: 12px;
+            background: rgba(0,229,255,0.08); border: 1px solid rgba(0,229,255,0.2);
+            display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0;
+        }
+
+        .contact-item-text a { color: var(--text); text-decoration: none; }
+        .contact-item-text a:hover { color: var(--accent); }
+        .contact-item-label { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+        .contact-item-value { font-size: 0.95rem; }
+
+        .form-group { display: flex; flex-direction: column; gap: 6px; }
+        .form-group label { font-size: 0.85rem; font-weight: 500; color: var(--text); }
+
+        .form-input {
+            background: var(--card); border: 1px solid var(--border);
+            border-radius: 10px; padding: 12px 16px;
+            color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 0.9rem;
+            transition: border-color .2s, box-shadow .2s; outline: none; width: 100%;
+        }
+        .form-input::placeholder { color: var(--muted); }
+        .form-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(0,229,255,0.1); }
+
+        textarea.form-input { resize: vertical; min-height: 130px; }
+
+        .contact-form { display: flex; flex-direction: column; gap: 20px; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+        /* ── NEWSLETTER ── */
+        .newsletter {
+            padding: 80px 0; 
+        }
+
+        .newsletter-box {
+            background: linear-gradient(135deg, rgba(0,229,255,0.06), rgba(123,92,250,0.06));
+            border: 1px solid rgba(0,229,255,0.2);
+            border-radius: 24px; padding: 60px 40px;
+            text-align: center; position: relative; overflow: hidden;
+        }
+
+        .newsletter-box::before {
+            content: ''; position: absolute; top: -50%; left: 50%; transform: translateX(-50%);
+            width: 400px; height: 400px;
+            background: radial-gradient(circle, rgba(0,229,255,0.08) 0%, transparent 70%);
+        }
+
+        .newsletter-box h2 { font-size: 2rem; margin-bottom: 12px; }
+        .newsletter-box p { color: var(--muted); margin-bottom: 36px; }
+
+        .newsletter-form {
+            display: flex; max-width: 480px; margin: 0 auto;
+            background: var(--card); border: 1px solid var(--border);
+            border-radius: 12px; overflow: hidden;
+        }
+
+        .newsletter-form input {
+            flex: 1; background: transparent; border: none; outline: none;
+            padding: 14px 20px; color: var(--text); font-family: 'DM Sans', sans-serif;
+            font-size: 0.9rem;
+        }
+        .newsletter-form input::placeholder { color: var(--muted); }
+
+        .newsletter-form button {
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            color: #000; border: none; padding: 14px 28px;
+            font-weight: 700; font-size: 0.9rem; cursor: pointer; transition: opacity .2s;
+            white-space: nowrap;
+        }
+        .newsletter-form button:hover { opacity: 0.9; }
+
+        /* ── FOOTER ── */
+        footer {
+            padding: 80px clamp(20px,5vw,60px) 32px;
+            border-top: 1px solid var(--border);
+        }
+
+        .footer-grid {
+            display: grid; grid-template-columns: 1.5fr repeat(3, 1fr);
+            gap: 60px; margin-bottom: 60px;
+        }
+
+        .footer-brand p { color: var(--muted); font-size: 0.88rem; margin: 16px 0 24px; max-width: 260px; }
+
+        .footer-socials { display: flex; gap: 12px; }
+        .social-link {
+            width: 38px; height: 38px; border-radius: 10px;
+            border: 1px solid var(--border); display: flex; align-items: center; justify-content: center;
+            color: var(--muted); text-decoration: none; font-size: 0.9rem; transition: all .2s;
+        }
+        .social-link:hover { border-color: var(--accent); color: var(--accent); }
+
+        .footer-col h4 { font-family: 'Syne', sans-serif; font-size: 0.9rem; color: var(--white); margin-bottom: 20px; }
+        .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+        .footer-col ul a { color: var(--muted); text-decoration: none; font-size: 0.88rem; transition: color .2s; }
+        .footer-col ul a:hover { color: var(--accent); }
+
+        .footer-bottom {
+            padding-top: 32px; border-top: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            flex-wrap: wrap; gap: 12px;
+            font-size: 0.82rem; color: var(--muted);
+        }
+
+        /* ── CHAT WIDGET ── */
+        .chat-fab {
+            position: fixed; bottom: 28px; right: 28px; z-index: 300;
+            width: 58px; height: 58px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            border: none; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 8px 32px rgba(0,229,255,0.35);
+            font-size: 1.4rem; transition: transform .2s;
+        }
+        .chat-fab:hover { transform: scale(1.1); }
+
+        .chat-popup {
+            position: fixed; bottom: 100px; right: 28px; z-index: 300;
+            width: 300px; background: var(--card); border: 1px solid var(--border);
+            border-radius: 16px; padding: 24px;
+            display: none; animation: slideUp .3s ease;
+        }
+        .chat-popup.show { display: block; }
+        @keyframes slideUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+
+        .chat-popup h4 { font-family: 'Syne', sans-serif; margin-bottom: 8px; }
+        .chat-popup p { color: var(--muted); font-size: 0.85rem; margin-bottom: 16px; }
+
+        .chat-btn {
+            display: flex; align-items: center; gap: 10px;
+            background: #25D366; color: #fff; border: none; border-radius: 10px;
+            padding: 12px 16px; width: 100%; cursor: pointer; font-size: 0.9rem; font-weight: 600;
+            transition: opacity .2s; text-decoration: none;
+        }
+        .chat-btn:hover { opacity: 0.9; }
+
+        /* ── UTILS ── */
+        .text-center { text-align: center; }
+        .section-header { margin-bottom: 60px; }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 1024px) {
+            .footer-grid { grid-template-columns: 1fr 1fr; }
+            .portfolio-grid { grid-template-columns: 1fr 1fr; }
+            .portfolio-card:first-child { grid-column: span 2; }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links, .nav-cta { display: none; }
+            .hamburger { display: block; }
+            .hero { padding-top: 100px; }
+            .floating-badges, .floating-badges-right { display: none; }
+            .contact-wrapper { grid-template-columns: 1fr; }
+            .form-row { grid-template-columns: 1fr; }
+            .footer-grid { grid-template-columns: 1fr; gap: 40px; }
+            .portfolio-grid { grid-template-columns: 1fr; }
+            .portfolio-card:first-child { grid-column: span 1; }
+            .process-steps { grid-template-columns: 1fr 1fr; }
+            .process-steps::before { display: none; }
+        }
+
+        @media (max-width: 480px) {
+            .hero-stats { gap: 24px; }
+            .process-steps { grid-template-columns: 1fr; }
+            .pricing-grid { grid-template-columns: 1fr; }
+        }
+    </style>
 </head>
-
 <body>
-    <nav
-        class="sticky top-0 z-50 flex items-center justify-between w-full h-18 px-6 md:px-16 lg:px-24 xl:px-32 backdrop-blur">
-        <a href="#!">
-            <img class="h-9 w-auto" width="138" height="36" alt="logo" src="./assets/logo.svg" />
-        </a>
-        <div class="hidden lg:flex items-center gap-8 transition duration-500">
-            <a href="#creations" class="hover:text-slate-300 transition">
-                Creations
-            </a>
-            <a href="#about" class="hover:text-slate-300 transition">
-                About
-            </a>
-            <a href="#testimonials" class="hover:text-slate-300 transition">
-                Testimonials
-            </a>
-            <a href="#contact" class="hover:text-slate-300 transition">
-                Contact
-            </a>
-        </div>
-        <div class="hidden lg:block space-x-3">
-            <button
-                class="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 transition text-white rounded-md active:scale-95">
-                Get started
-            </button>
-            <button
-                class="hover:bg-slate-300/20 transition px-6 py-2 border border-slate-400 rounded-md active:scale-95">
-                Login
-            </button>
-        </div>
-        <button class="lg:hidden active:scale-90 transition" id="menu-button">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                class="lucide lucide-menu size-6.5" aria-hidden="true">
-                <path d="M4 5h16"></path>
-                <path d="M4 12h16"></path>
-                <path d="M4 19h16"></path>
-            </svg>
-        </button>
-    </nav>
 
-    <div id="nav-links" class="fixed inset-0 z-[100] bg-black/60 backdrop-blur flex flex-col items-center justify-center text-lg gap-8 lg:hidden transition-transform duration-400 -translate-x-full">
-        <a href="/#creations">
-            Creations
-        </a>
-        <a href="/#about">
-            About
-        </a>
-        <a href="/#testimonials">
-            Testimonials
-        </a>
-        <a href="/#contact">
-            Contact
-        </a>
-        <button id="close-menu" class="active:ring-3 active:ring-white aspect-square size-10 p-1 items-center justify-center bg-slate-100 hover:bg-slate-200 transition text-black rounded-md flex">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                class="lucide lucide-x" aria-hidden="true">
-                <path d="M18 6 6 18"></path>
-                <path d="m6 6 12 12"></path>
-            </svg>
-        </button>
+<!-- NAV -->
+<nav>
+    <a href="#!" class="nav-logo">
+        <div class="nav-logo-icon">GX</div>
+        Generate<span>X</span>
+    </a>
+    <div class="nav-links">
+        <a href="#services">Services</a>
+        <a href="#process">Comment ça marche</a>
+        <a href="#portfolio">Portfolio</a>
+        <a href="#pricing">Tarifs</a>
+        <a href="#testimonials">Avis</a>
+        <a href="#contact">Contact</a>
     </div>
-    
-    <!-- Hero Section -->
-     <section class="flex flex-col items-center -mt-18">
-        <svg class="absolute -z-10 w-full -mt-40 md:mt-0" width="1440" height="676" viewBox="0 0 1440 676" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect x="-92" y="-948" width="1624" height="1624" rx="812" fill="url(#a)"></rect>
-            <defs>
-                <radialGradient id="a" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse"
-                    gradientTransform="rotate(90 428 292)scale(812)">
-                    <stop offset=".63" stop-color="#372AAC" stop-opacity="0"></stop>
-                    <stop offset="1" stop-color="#372AAC"></stop>
-                </radialGradient>
-            </defs>
-        </svg>
-        <a class="flex items-center mt-48 gap-2 border border-slate-600 text-gray-50 rounded-full px-4 py-2">
-            <div class="size-2.5 bg-green-500 rounded-full animate-pulse"></div>
-            <span>Book a live demo today</span>
+    <div class="nav-cta" style="display:flex;gap:10px;">
+        <a href="tel:+261381226663" class="btn-ghost">📞 Appeler</a>
+        <a href="#contact" class="btn-primary">Démarrer un projet →</a>
+    </div>
+    <button class="hamburger" id="menu-btn" aria-label="Menu">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5h16M4 12h16M4 19h16"/></svg>
+    </button>
+</nav>
+
+<!-- MOBILE MENU -->
+<div id="mobile-menu">
+    <a href="#services" class="mobile-link">Services</a>
+    <a href="#process" class="mobile-link">Comment ça marche</a>
+    <a href="#portfolio" class="mobile-link">Portfolio</a>
+    <a href="#pricing" class="mobile-link">Tarifs</a>
+    <a href="#testimonials" class="mobile-link">Avis</a>
+    <a href="#contact" class="mobile-link">Contact</a>
+    <a href="#contact" class="btn-primary">Démarrer un projet →</a>
+    <button id="close-menu">✕ Fermer</button>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+    <div class="hero-glow"></div>
+    <div class="hero-glow2"></div>
+
+    <!-- Floating Badges -->
+    <div class="floating-badges">
+        <div class="badge-card"><span class="badge-icon">🌐</span><span>Site vitrine livré</span></div>
+        <div class="badge-card"><span class="badge-icon">📱</span><span>App mobile déployée</span></div>
+        <div class="badge-card"><span class="badge-icon">⚡</span><span>Délai rapide</span></div>
+    </div>
+    <div class="floating-badges-right">
+        <div class="badge-card"><span class="badge-icon">🛒</span><span>ERP sur mesure</span></div>
+        <div class="badge-card"><span class="badge-icon">🎬</span><span>Montage vidéo HD</span></div>
+        <div class="badge-card"><span class="badge-icon">🔧</span><span>Support informatique</span></div>
+    </div>
+
+    <div class="section-tag">
+        <div class="dot-live"></div>
+        Disponible pour de nouveaux projets
+    </div>
+
+    <h1 class="hero-title">
+        Votre vision digitale,<br>
+        <em>Everything is Possible</em>
+    </h1>
+
+    <p class="hero-sub">
+        GenerateX conçoit et déploie des solutions digitales sur mesure — sites web, ERP, logiciels POS, applications mobiles, identité visuelle et montage vidéo. En local ou en ligne, nous faisons de votre idée une réalité.
+    </p>
+
+    <div class="hero-cta">
+        <a href="#contact" class="btn-primary">
+            Lancer mon projet
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
         </a>
-        <h1 class="text-center text-5xl leading-[68px] md:text-6xl md:leading-[70px] mt-4 font-semibold max-w-2xl">
-            Let's build AI agents together
-        </h1>
-        <p class="text-center text-base max-w-lg mt-2">
-            Our platform helps you build, test, and deliver faster — so you can focus on what matters.
-        </p>
-        <div class="flex items-center gap-4 mt-8">
-            <button class="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 transition text-white active:scale-95 rounded-lg px-7 h-11">
-                Get started
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-right size-5" aria-hidden="true">
-                    <path d="M5 12h14"></path>
-                    <path d="m12 5 7 7-7 7"></path>
-                </svg>
-            </button>
-            <button class="border border-slate-400 active:scale-95 hover:bg-white/10 transition rounded-lg px-8 h-11">
-                Book a demo
-            </button>
-        </div>
-        <figure class="relative w-full h-full [perspective:800px] mt-16 max-w-4xl mx-auto flex flex-col items-center justify-center">
-            <div class="relative [transform-style:preserve-3d] w-full max-w-4xl">
-                <img class="w-full rounded-[15px] will-change-transform [transform:translateZ(0)]" alt="hero section showcase" src="https://raw.githubusercontent.com/prebuiltui/prebuiltui/main/assets/hero/hero-section-showcase-2.png" />
-            </div>
-        </figure>
-    </section>
+        <a href="#portfolio" class="btn-ghost">Voir nos réalisations</a>
+    </div>
 
-    <!-- Our Creations Section -->
-    <section class="flex flex-col items-center" id="creations">
-        <div class="flex flex-col items-center mt-32">
-            <h2 class="text-center text-4xl font-semibold max-w-2xl">
-                Our latest
-                <span class="bg-gradient-to-t from-indigo-600 to-black p-1 bg-left inline-block bg-no-repeat">creation</span>
+    <div class="hero-stats">
+        <div class="hero-stat">
+            <div class="hero-stat-num">50<span>+</span></div>
+            <div class="hero-stat-label">Projets livrés</div>
+        </div>
+        <div class="hero-stat">
+            <div class="hero-stat-num">100<span>%</span></div>
+            <div class="hero-stat-label">Clients satisfaits</div>
+        </div>
+        <div class="hero-stat">
+            <div class="hero-stat-num">7<span>j</span></div>
+            <div class="hero-stat-label">Délai moyen livraison</div>
+        </div>
+        <div class="hero-stat">
+            <div class="hero-stat-num">24<span>/7</span></div>
+            <div class="hero-stat-label">Support disponible</div>
+        </div>
+    </div>
+</section>
+
+<!-- SERVICES -->
+<section class="services" id="services">
+    <div class="section-inner">
+        <div class="text-center section-header">
+            <div class="section-tag">🚀 Ce que nous faisons</div>
+            <h2 style="font-size:clamp(2rem,4vw,3rem); margin-bottom:16px;">
+                Des solutions pour <span class="grad-text">chaque besoin</span>
             </h2>
-            <p class="text-center text-slate-400 max-w-lg mt-3">
-                A visual collection of our most recent works - each piece crafted with
-                intention, emotion, and style.
+            <p style="color:var(--muted); max-width:540px; margin:0 auto;">
+                Du design à la mise en production, GenerateX couvre l'ensemble du spectre digital avec expertise et passion.
             </p>
         </div>
-        <div class="flex items-center gap-4 h-100 w-full max-w-5xl mt-18 mx-auto">
-            <div class="relative group flex-grow h-[400px] rounded-xl overflow-hidden hover:w-full w-56 transition-all duration-500">
-                <img class="h-full w-full object-cover object-center" alt="Prompt engineers"
-                    src="https://images.unsplash.com/photo-1543269865-0a740d43b90c?q=80&amp;w=800&amp;h=400&amp;auto=format&amp;fit=crop" />
-                <div class="absolute inset-0 flex flex-col justify-end p-10 text-white bg-black/50 transition-all duration-300 opacity-0 group-hover:opacity-100">
-                    <h1 class="text-3xl font-semibold">Prompt engineers</h1>
-                    <p class="text-sm mt-2">
-                        Bridging the gap between human intent and machine understanding
-                        through expert prompt design.
-                    </p>
-                </div>
-            </div>
-            <div class="relative group flex-grow h-[400px] rounded-xl overflow-hidden hover:w-full w-56 transition-all duration-500">
-                <img class="h-full w-full object-cover object-right" alt="Data scientists"
-                    src="https://images.unsplash.com/photo-1714976326351-0ecf0244f0fc?q=80&amp;w=800&amp;h=400&amp;auto=format&amp;fit=crop" />
-                <div class="absolute inset-0 flex flex-col justify-end p-10 text-white bg-black/50 transition-all duration-300 opacity-0 group-hover:opacity-100">
-                    <h1 class="text-3xl font-semibold">Data scientists</h1>
-                    <p class="text-sm mt-2">
-                        Turning data into actionable insights that drive intelligent
-                        innovation and growth.
-                    </p>
-                </div>
-            </div>
-            <div class="relative group flex-grow h-[400px] rounded-xl overflow-hidden hover:w-full w-56 transition-all duration-500">
-                <img class="h-full w-full object-cover object-center" alt="Software engineers"
-                    src="https://images.unsplash.com/photo-1736220690062-79e12ca75262?q=80&amp;w=800&amp;h=400&amp;auto=format&amp;fit=crop" />
-                <div class="absolute inset-0 flex flex-col justify-end p-10 text-white bg-black/50 transition-all duration-300 opacity-0 group-hover:opacity-100">
-                    <h1 class="text-3xl font-semibold">Software engineers</h1>
-                    <p class="text-sm mt-2">
-                        Building scalable and efficient systems that bring ideas to life
-                        through code.
-                    </p>
-                </div>
-            </div>
-        </div>
-    </section>
 
-    <!-- About Section -->
-    <section class="flex flex-col items-center" id="about">
-        <div class="flex flex-col items-center mt-32">
-            <h2 class="text-center text-4xl font-semibold max-w-2xl">
-                About our 
-                <span class="bg-gradient-to-t from-indigo-600 to-black p-1 bg-left inline-block bg-no-repeat">apps</span>
-            </h2>
-            <p class="text-center text-slate-400 max-w-lg mt-3">A visual collection of
-                our most recent works - each piece crafted with intention, emotion, and style.</p>
-        </div>
-        <div class="relative max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 px-8 md:px-0 mt-18">
-            <div class="py-10 border-b border-slate-700 md:py-0 md:border-r md:border-b-0 md:px-10">
-                <div class="size-10 p-2 bg-indigo-600/20 border border-indigo-600/30 rounded">
-                    <img alt="" src="https://raw.githubusercontent.com/prebuiltui/prebuiltui/main/assets/aboutSection/flashEmoji.png">
-                </div>
-                <div class="mt-5 space-y-2">
-                    <h3 class="text-base font-medium text-slate-200">Lightning-Fast Performance</h3>
-                    <p class="text-sm text-slate-400">Built with speed — minimal load times and optimized.</p>
+        <div class="services-grid">
+            <div class="service-card">
+                <div class="service-icon">🌐</div>
+                <div class="service-title">Sites Vitrine & Institutional</div>
+                <p class="service-desc">Nous créons des sites web élégants, rapides et optimisés pour le référencement. Votre présence en ligne commence ici — professionnelle, mémorable et efficace.</p>
+                <div class="service-tags">
+                    <span class="service-tag">WordPress</span>
+                    <span class="service-tag">HTML/CSS</span>
+                    <span class="service-tag">SEO</span>
+                    <span class="service-tag">Responsive</span>
                 </div>
             </div>
-            <div class="py-10 border-b border-slate-700 md:py-0 lg:border-r md:border-b-0 md:px-10">
-                <div class="size-10 p-2 bg-indigo-600/20 border border-indigo-600/30 rounded">
-                    <img alt="" src="https://raw.githubusercontent.com/prebuiltui/prebuiltui/main/assets/aboutSection/colorsEmoji.png">
-                </div>
-                <div class="mt-5 space-y-2">
-                    <h3 class="text-base font-medium text-slate-200">Beautifully Designed Components</h3>
-                    <p class="text-sm text-slate-400">Modern, pixel-perfect UI components ready for any project.</p>
-                </div>
-            </div>
-            <div class="py-10 border-b border-slate-700 md:py-0 md:border-b-0 md:px-10">
-                <div class="size-10 p-2 bg-indigo-600/20 border border-indigo-600/30 rounded">
-                    <img alt="" src="https://raw.githubusercontent.com/prebuiltui/prebuiltui/main/assets/aboutSection/puzzelEmoji.png">
-                </div>
-                <div class="mt-5 space-y-2">
-                    <h3 class="text-base font-medium text-slate-200">Plug-and-Play Integration</h3>
-                    <p class="text-sm text-slate-400">Simple setup with support for React, Next.js and Tailwind css.</p>
-                </div>
-            </div>
-        </div>
-    </section>
 
-    <!-- Testimonials Section -->
-    <section class="flex flex-col items-center" id="testimonials">
-        <div class="flex flex-col items-center mt-32">
-            <h2 class="text-center text-4xl font-semibold max-w-2xl">Our
-                <span class="bg-gradient-to-t from-indigo-600 to-black p-1 bg-left inline-block bg-no-repeat">testimonials</span>
+            <div class="service-card">
+                <div class="service-icon">🏢</div>
+                <div class="service-title">ERP & Logiciels de Gestion</div>
+                <p class="service-desc">Des systèmes ERP complets et personnalisés pour gérer vos stocks, ventes, finances, RH et bien plus. Adapté à votre secteur d'activité, déployé en local ou cloud.</p>
+                <div class="service-tags">
+                    <span class="service-tag">Sur mesure</span>
+                    <span class="service-tag">Multi-utilisateurs</span>
+                    <span class="service-tag">Rapports</span>
+                </div>
+            </div>
+
+            <div class="service-card">
+                <div class="service-icon">🛒</div>
+                <div class="service-title">Logiciels POS (Point de Vente)</div>
+                <p class="service-desc">Solutions de caisse et de point de vente complètes pour boutiques, restaurants, pharmacies et commerces. Gestion en temps réel, facile à utiliser et robuste.</p>
+                <div class="service-tags">
+                    <span class="service-tag">Caisse tactile</span>
+                    <span class="service-tag">Inventaire</span>
+                    <span class="service-tag">Rapports ventes</span>
+                </div>
+            </div>
+
+            <div class="service-card">
+                <div class="service-icon">📱</div>
+                <div class="service-title">Applications Personnalisées</div>
+                <p class="service-desc">Applications web et mobiles sur mesure pour vos besoins spécifiques. Que ce soit une app interne, un portail client ou une plateforme complète, nous construisons ce dont vous avez besoin.</p>
+                <div class="service-tags">
+                    <span class="service-tag">React</span>
+                    <span class="service-tag">Mobile</span>
+                    <span class="service-tag">API REST</span>
+                </div>
+            </div>
+
+            <div class="service-card">
+                <div class="service-icon">🎨</div>
+                <div class="service-title">Design Graphique & Identité Visuelle</div>
+                <p class="service-desc">Logos, chartes graphiques, supports print et digitaux. Nous construisons une identité visuelle forte et cohérente qui reflète vos valeurs et marque les esprits.</p>
+                <div class="service-tags">
+                    <span class="service-tag">Logo</span>
+                    <span class="service-tag">Charte graphique</span>
+                    <span class="service-tag">UI/UX</span>
+                </div>
+            </div>
+
+            <div class="service-card">
+                <div class="service-icon">🎬</div>
+                <div class="service-title">Montage Vidéo Professionnel</div>
+                <p class="service-desc">Montage, motion design, sous-titrage, color grading. Publicités, présentations d'entreprise, reels réseaux sociaux — nous donnons vie à vos contenus vidéo.</p>
+                <div class="service-tags">
+                    <span class="service-tag">After Effects</span>
+                    <span class="service-tag">Premiere Pro</span>
+                    <span class="service-tag">Motion Design</span>
+                </div>
+            </div>
+
+            <div class="service-card">
+                <div class="service-icon">☁️</div>
+                <div class="service-title">Déploiement En Ligne & En Local</div>
+                <p class="service-desc">Hébergement, configuration serveur, déploiement cloud (VPS, cPanel, Vercel) ou sur réseau local de votre entreprise. Nous gérons l'aspect technique de A à Z.</p>
+                <div class="service-tags">
+                    <span class="service-tag">VPS</span>
+                    <span class="service-tag">Réseau local</span>
+                    <span class="service-tag">Sécurité</span>
+                </div>
+            </div>
+
+            <div class="service-card">
+                <div class="service-icon">🔧</div>
+                <div class="service-title">Support & Assistance Informatique</div>
+                <p class="service-desc">Maintenance préventive, dépannage, formation de vos équipes, installation de matériel. Nous assurons le bon fonctionnement de votre parc informatique au quotidien.</p>
+                <div class="service-tags">
+                    <span class="service-tag">Maintenance</span>
+                    <span class="service-tag">Formation</span>
+                    <span class="service-tag">Dépannage</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- PROCESS -->
+<section class="process" id="process">
+    <div class="section-inner">
+        <div class="text-center section-header">
+            <div class="section-tag">⚙️ Notre méthode</div>
+            <h2 style="font-size:clamp(2rem,4vw,3rem); margin-bottom:16px;">
+                Comment nous <span class="grad-text">travaillons</span>
             </h2>
-            <p class="text-center text-slate-400 max-w-lg mt-3">A visual collection of
-                our most recent works - each piece crafted with intention, emotion, and style.
+            <p style="color:var(--muted); max-width:540px; margin:0 auto;">
+                Un processus structuré, transparent et orienté résultats. Vous êtes impliqué à chaque étape.
             </p>
         </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-18 max-w-6xl mx-auto">
-            <div class="group border border-slate-800 p-6 rounded-xl">
-                <p class="text-slate-100 text-base">Super clean and easy to use. These Tailwind + React components saved me
-                    hours of dev time!</p>
-                <div class="flex items-center gap-3 mt-8 group-hover:-translate-y-1 duration-300">
-                    <img class="size-10 rounded-full" alt="user image"
-                        src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&amp;w=200">
-                    <div>
-                        <h2 class="text-gray-200 font-medium">Richard Nelson</h2>
-                        <p class="text-indigo-500">AI Content Marketer</p>
-                    </div>
-                </div>
+
+        <div class="process-steps">
+            <div class="process-step">
+                <div class="step-num">01</div>
+                <div class="step-title">Consultation & Analyse</div>
+                <p class="step-desc">On discute de vos besoins, objectifs et contraintes. On définit ensemble la solution la plus adaptée.</p>
             </div>
-            <div class="group border border-slate-800 p-6 rounded-xl">
-                <p class="text-slate-100 text-base">The design quality is top-notch. Perfect balance between simplicity and
-                    style. Highly recommend!
-                </p>
-                <div class="flex items-center gap-3 mt-8 group-hover:-translate-y-1 duration-300">
-                    <img class="size-10 rounded-full" alt="user image" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&amp;w=200">
-                    <div>
-                        <h2 class="text-gray-200 font-medium">Sophia Martinez</h2>
-                        <p class="text-indigo-500">UI/UX Designer</p>
-                    </div>
-                </div>
+            <div class="process-step">
+                <div class="step-num">02</div>
+                <div class="step-title">Conception & Design</div>
+                <p class="step-desc">Maquettes, wireframes et design validés avec vous avant tout développement. Aucune surprise.</p>
             </div>
-            <div class="group border border-slate-800 p-6 rounded-xl">
-                <p class="text-slate-100 text-base">Absolutely love the reusability of these components. My workflow feels
-                    10x faster now.
-                </p>
-                <div class="flex items-center gap-3 mt-8 group-hover:-translate-y-1 duration-300">
-                    <img class="size-10 rounded-full" alt="user image"
-                        src="https://images.unsplash.com/photo-1527980965255-d3b416303d12?w=200&amp;auto=format&amp;fit=crop&amp;q=60">
-                    <div>
-                        <h2 class="text-gray-200 font-medium">Ethan Roberts</h2>
-                        <p class="text-indigo-500">Frontend Developer</p>
-                    </div>
-                </div>
+            <div class="process-step">
+                <div class="step-num">03</div>
+                <div class="step-title">Développement</div>
+                <p class="step-desc">Développement rapide avec des points d'avancement réguliers. Vous voyez votre projet prendre vie.</p>
             </div>
-            <div class="group border border-slate-800 p-6 rounded-xl">
-                <p class="text-slate-100 text-base">Clean, elegant, and efficient. These components are a dream for any
-                    modern web developer.
-                </p>
-                <div class="flex items-center gap-3 mt-8 group-hover:-translate-y-1 duration-300">
-                    <img class="size-10 rounded-full" alt="user image"
-                        src="https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=200&amp;auto=format&amp;fit=crop&amp;q=60">
-                    <div>
-                        <h2 class="text-gray-200 font-medium">Isabella Kim</h2>
-                        <p class="text-indigo-500">Product Designer</p>
-                    </div>
-                </div>
+            <div class="process-step">
+                <div class="step-num">04</div>
+                <div class="step-title">Tests & Validation</div>
+                <p class="step-desc">Tests complets, corrections et validation de votre part avant la mise en ligne officielle.</p>
             </div>
-            <div class="group border border-slate-800 p-6 rounded-xl">
-                <p class="text-slate-100 text-base">I've tried dozens of UI kits, but this one just feels right. Everything
-                    works seamlessly.
-                </p>
-                <div class="flex items-center gap-3 mt-8 group-hover:-translate-y-1 duration-300">
-                    <img class="size-10 rounded-full" alt="user image"
-                        src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&amp;w=100&amp;h=100&amp;auto=format&amp;fit=crop">
-                    <div>
-                        <h2 class="text-gray-200 font-medium">Liam Johnson</h2>
-                        <p class="text-indigo-500">Software Engineer</p>
-                    </div>
-                </div>
-            </div>
-            <div class="group border border-slate-800 p-6 rounded-xl">
-                <p class="text-slate-100 text-base">Brilliantly structured components with clean, modern styling. Makes
-                    development a joy!
-                </p>
-                <div class="flex items-center gap-3 mt-8 group-hover:-translate-y-1 duration-300">
-                    <img class="size-10 rounded-full" alt="user image"
-                        src="https://raw.githubusercontent.com/prebuiltui/prebuiltui/main/assets/userImage/userImage1.png">
-                    <div>
-                        <h2 class="text-gray-200 font-medium">Ava Patel</h2>
-                        <p class="text-indigo-500">Full Stack Developer</p>
-                    </div>
-                </div>
+            <div class="process-step">
+                <div class="step-num">05</div>
+                <div class="step-title">Déploiement & Suivi</div>
+                <p class="step-desc">Mise en production, formation et support continu pour garantir votre succès sur le long terme.</p>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
-    <!-- Trusted Companies Section -->
-    <section class="flex flex-col items-center">
-        <div class="flex flex-col items-center mt-32">
-            <h2 class="text-center text-4xl font-semibold max-w-2xl" style="opacity: 1; transform: none;">Trusted 
-                <span class="bg-gradient-to-t from-indigo-600 to-black p-1 bg-left inline-block bg-no-repeat">companies</span>
+<!-- PORTFOLIO -->
+<section class="portfolio" id="portfolio">
+    <div class="section-inner">
+        <div class="text-center section-header">
+            <div class="section-tag">💼 Réalisations</div>
+            <h2 style="font-size:clamp(2rem,4vw,3rem); margin-bottom:16px;">
+                Nos dernières <span class="grad-text">créations</span>
             </h2>
-            <p class="text-center text-slate-400 max-w-lg mt-3">A visual collection of
-                our most recent works - each piece crafted with intention, emotion, and style.
+            <p style="color:var(--muted); max-width:540px; margin:0 auto;">
+                Chaque projet est unique. Voici un aperçu de ce que GenerateX a conçu et livré.
             </p>
         </div>
-        <div class="relative max-w-5xl py-20 md:py-26 mt-18 md:w-full overflow-hidden mx-2 md:mx-auto border border-indigo-900 flex flex-col md:flex-row items-center justify-between bg-gradient-to-br from-[#401B98]/5 to-[#180027]/10 rounded-3xl p-4 md:p-10 text-white">
-            <div class="absolute pointer-events-none top-10 -z-1 left-20 size-64 bg-gradient-to-br from-[#536DFF] to-[#4F39F6]/60 blur-[180px]"></div>
-            <div class="absolute pointer-events-none bottom-10 -z-1 right-20 size-64 bg-gradient-to-br from-[#536DFF] to-[#4F39F6]/60 blur-[180px]"></div>
-            <div class="flex flex-col items-center md:items-start max-md:text-center">
-                <a href="#!" class="group flex items-center gap-2 rounded-full text-sm p-1 pr-3 text-indigo-300 bg-indigo-200/15">
-                    <span class="bg-indigo-600 text-white text-xs px-3.5 py-1 rounded-full">NEW</span>
-                    <p class="flex items-center gap-1">
-                        <span>Try 30 days free trial option </span>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right-icon lucide-chevron-right group-hover:translate-x-0.5 transition duration-300">
-                            <path d="m9 18 6-6-6-6"></path>
-                        </svg>
-                    </p>
-                </a>
-                <h1 class="text-3xl font-medium max-w-xl mt-5 bg-gradient-to-r from-white to-[#b6abff] text-transparent bg-clip-text">
-                    Trusted by leading companies.
-                </h1>
-                <p class="text-base text-slate-400 max-w-lg mt-4">
-                    Built to integrate effortlessly with your existing tools, frameworks and workflows — so you can move faster.
-                </p>
-                <button class="flex items-center gap-1 text-sm px-6 py-2.5 border border-indigo-400 hover:bg-indigo-300/10 active:scale-95 transition rounded-full mt-6">
-                    Read more
-                    <svg width="13" height="10" viewBox="0 0 13 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M12.4243 5.42426C12.6586 5.18995 12.6586 4.81005 12.4243 4.57574L8.60589 0.757359C8.37157 0.523045 7.99167 0.523045 7.75736 0.757359C7.52304 0.991674 7.52304 1.37157 7.75736 1.60589L11.1515 5L7.75736 8.39411C7.52304 8.62843 7.52304 9.00833 7.75736 9.24264C7.99167 9.47696 8.37157 9.47696 8.60589 9.24264L12.4243 5.42426ZM0 5L0 5.6L12 5.6V5V4.4L0 4.4L0 5Z" fill="white"></path>
-                    </svg>
+
+        <div class="portfolio-tabs">
+            <button class="tab-btn active">Tous</button>
+            <button class="tab-btn">Sites Web</button>
+            <button class="tab-btn">ERP / POS</button>
+            <button class="tab-btn">Design</button>
+            <button class="tab-btn">Vidéo</button>
+        </div>
+
+        <div class="portfolio-grid">
+            <div class="portfolio-card">
+                <div class="portfolio-mockup" style="background:linear-gradient(135deg,#0a1628,#1a0a2e);">
+                    <div style="text-align:center;z-index:1;position:relative;">
+                        <div style="font-size:4rem;margin-bottom:8px;">🛍️</div>
+                        <div style="font-family:'Syne',sans-serif;font-size:1.5rem;color:var(--accent);">E-commerce Platform</div>
+                        <div style="font-size:0.8rem;color:var(--muted);">Design moderne & conversions maximisées</div>
+                    </div>
+                </div>
+                <div class="portfolio-info">
+                    <span class="portfolio-cat">Site Web</span>
+                    <h4>Boutique en ligne — Mode & Accessoires</h4>
+                    <p>Site e-commerce complet avec panier, paiement en ligne, gestion des stocks et tableau de bord admin.</p>
+                </div>
+            </div>
+
+            <div class="portfolio-card">
+                <div class="portfolio-mockup" style="background:linear-gradient(135deg,#0a2010,#0a1628);">
+                    <div style="text-align:center;z-index:1;position:relative;">
+                        <div style="font-size:3rem;margin-bottom:8px;">📊</div>
+                        <div style="font-family:'Syne',sans-serif;font-size:1.2rem;color:#22c55e;">ERP Dashboard</div>
+                    </div>
+                </div>
+                <div class="portfolio-info">
+                    <span class="portfolio-cat">ERP</span>
+                    <h4>Système de gestion PME</h4>
+                    <p>ERP complet : stocks, facturation, RH et reporting en temps réel.</p>
+                </div>
+            </div>
+
+            <div class="portfolio-card">
+                <div class="portfolio-mockup" style="background:linear-gradient(135deg,#1a0a0a,#2a0a1a);">
+                    <div style="text-align:center;z-index:1;position:relative;">
+                        <div style="font-size:3rem;margin-bottom:8px;">🏥</div>
+                        <div style="font-family:'Syne',sans-serif;font-size:1.2rem;color:#f472b6;">Clinique digitale</div>
+                    </div>
+                </div>
+                <div class="portfolio-info">
+                    <span class="portfolio-cat">Application</span>
+                    <h4>Portail patients & RDV en ligne</h4>
+                    <p>Application web de prise de rendez-vous médicaux avec dossiers patients sécurisés.</p>
+                </div>
+            </div>
+
+            <div class="portfolio-card">
+                <div class="portfolio-mockup" style="background:linear-gradient(135deg,#1a1200,#0e1320);">
+                    <div style="text-align:center;z-index:1;position:relative;">
+                        <div style="font-size:3rem;margin-bottom:8px;">🍽️</div>
+                        <div style="font-family:'Syne',sans-serif;font-size:1.2rem;color:#f59e0b;">Restaurant POS</div>
+                    </div>
+                </div>
+                <div class="portfolio-info">
+                    <span class="portfolio-cat">POS</span>
+                    <h4>Caisse restaurant tactile</h4>
+                    <p>Logiciel POS pour restaurant avec gestion des tables, commandes et tickets de caisse.</p>
+                </div>
+            </div>
+
+            <div class="portfolio-card">
+                <div class="portfolio-mockup" style="background:linear-gradient(135deg,#0a0a1a,#1a0a2e);">
+                    <div style="text-align:center;z-index:1;position:relative;">
+                        <div style="font-size:3rem;margin-bottom:8px;">🎨</div>
+                        <div style="font-family:'Syne',sans-serif;font-size:1.2rem;color:var(--accent2);">Brand Identity</div>
+                    </div>
+                </div>
+                <div class="portfolio-info">
+                    <span class="portfolio-cat">Design</span>
+                    <h4>Identité visuelle complète</h4>
+                    <p>Logo, charte graphique, cartes de visite et supports marketing pour une startup tech.</p>
+                </div>
+            </div>
+        </div>
+
+        <div style="text-align:center;margin-top:40px;">
+            <a href="#contact" class="btn-ghost">Voir tous les projets →</a>
+        </div>
+    </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing" id="pricing">
+    <div class="section-inner">
+        <div class="text-center section-header">
+            <div class="section-tag">💰 Nos tarifs</div>
+            <h2 style="font-size:clamp(2rem,4vw,3rem); margin-bottom:16px;">
+                Des prix <span class="grad-text">transparents</span>
+            </h2>
+            <p style="color:var(--muted); max-width:540px; margin:0 auto;">
+                Pas de mauvaises surprises. Des devis clairs adaptés à votre budget et vos besoins.
+            </p>
+        </div>
+
+        <div class="pricing-grid">
+            <div class="pricing-card">
+                <div class="pricing-plan">Starter</div>
+                <div class="pricing-price">Sur devis <span></span></div>
+                <div class="pricing-desc">Idéal pour les petites entreprises qui veulent une présence en ligne professionnelle rapidement.</div>
+                <ul class="pricing-features">
+                    <li>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>
+                        Site vitrine 5 pages
+                    </li>
+                    <li>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>
+                        Design responsive mobile
+                    </li>
+                    <li>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>
+                        Hébergement 1 an inclus
+                    </li>
+                    <li>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>
+                        Nom de domaine offert
+                    </li>
+                    <li>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>
+                        1 mois de support
+                    </li>
+                </ul>
+                <a href="#contact" class="btn-ghost" style="width:100%;justify-content:center;">Demander un devis</a>
+            </div>
+
+            <div class="pricing-card featured">
+                <div class="pricing-plan">Business</div>
+                <div class="pricing-price">Sur devis <span></span></div>
+                <div class="pricing-desc">Pour les entreprises qui ont besoin d'une solution complète et évolutive avec des fonctionnalités avancées.</div>
+                <ul class="pricing-features">
+                    <li>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#00e5ff" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>
+                        Site web ou application complète
+                    </li>
+                    <li>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#00e5ff" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>
+                        Système ERP ou POS sur mesure
+                    </li>
+                    <li>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#00e5ff" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>
+                        Design & identité visuelle
+                    </li>
+                    <li>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#00e5ff" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>
+                        Déploiement local ou cloud
+                    </li>
+                    <li>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#00e5ff" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>
+                        Formation de votre équipe
+                    </li>
+                    <li>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#00e5ff" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>
+                        3 mois de support inclus
+                    </li>
+                </ul>
+                <a href="#contact" class="btn-primary" style="width:100%;justify-content:center;">Demander un devis →</a>
+            </div>
+
+            <div class="pricing-card">
+                <div class="pricing-plan">Enterprise</div>
+                <div class="pricing-price">100% Sur mesure</div>
+                <div class="pricing-desc">Pour les grandes structures et projets complexes nécessitant une architecture robuste et évolutive.</div>
+                <ul class="pricing-features">
+                    <li>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>
+                        Tout ce qui est en Business
+                    </li>
+                    <li>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>
+                        Architecture multi-modules
+                    </li>
+                    <li>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>
+                        Intégrations API tierces
+                    </li>
+                    <li>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>
+                        Support prioritaire 24/7
+                    </li>
+                    <li>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>
+                        Maintenance & évolutions continues
+                    </li>
+                </ul>
+                <a href="#contact" class="btn-ghost" style="width:100%;justify-content:center;">Nous contacter</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials" id="testimonials">
+    <div class="section-inner">
+        <div class="text-center section-header">
+            <div class="section-tag">⭐ Témoignages</div>
+            <h2 style="font-size:clamp(2rem,4vw,3rem); margin-bottom:16px;">
+                Ce que disent <span class="grad-text">nos clients</span>
+            </h2>
+            <p style="color:var(--muted); max-width:540px; margin:0 auto;">
+                La confiance de nos clients est notre plus grande récompense.
+            </p>
+        </div>
+
+        <div class="testi-grid">
+            <div class="testi-card">
+                <div class="stars">⭐⭐⭐⭐⭐</div>
+                <p class="testi-text">"GenerateX a transformé notre boutique en une plateforme e-commerce moderne et fluide. Le résultat a dépassé nos attentes, livré bien avant le délai prévu."</p>
+                <div class="testi-author">
+                    <div class="testi-avatar">SR</div>
+                    <div>
+                        <div class="testi-name">Sandrine R.</div>
+                        <div class="testi-role">Gérante, Boutique Mode</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="testi-card">
+                <div class="stars">⭐⭐⭐⭐⭐</div>
+                <p class="testi-text">"Notre ERP développé par GenerateX nous a fait économiser des heures de travail chaque semaine. Interface intuitive, parfaitement adaptée à notre activité."</p>
+                <div class="testi-author">
+                    <div class="testi-avatar" style="background:linear-gradient(135deg,#ff6b35,#f59e0b);">JM</div>
+                    <div>
+                        <div class="testi-name">Jean-Marc D.</div>
+                        <div class="testi-role">Directeur, PME Logistique</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="testi-card">
+                <div class="stars">⭐⭐⭐⭐⭐</div>
+                <p class="testi-text">"Le support informatique de GenerateX est réactif et efficace. Ils ont résolu en quelques heures un problème qui nous bloquait depuis des jours. Très professionnels."</p>
+                <div class="testi-author">
+                    <div class="testi-avatar" style="background:linear-gradient(135deg,#22c55e,#00e5ff);">AT</div>
+                    <div>
+                        <div class="testi-name">Aimée T.</div>
+                        <div class="testi-role">Responsable IT, ONG</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="testi-card">
+                <div class="stars">⭐⭐⭐⭐⭐</div>
+                <p class="testi-text">"La vidéo de présentation de notre entreprise réalisée par GenerateX est absolument magnifique. Montage soigné, motion design fluide — on l'utilise partout maintenant!"</p>
+                <div class="testi-author">
+                    <div class="testi-avatar" style="background:linear-gradient(135deg,#7b5cfa,#ff6b35);">PR</div>
+                    <div>
+                        <div class="testi-name">Patrick R.</div>
+                        <div class="testi-role">CEO, Startup Tech</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="testi-card">
+                <div class="stars">⭐⭐⭐⭐⭐</div>
+                <p class="testi-text">"Notre logiciel POS fonctionne parfaitement, même hors ligne. Le déploiement sur notre réseau local a été rapide et sans accroc. Très bonne équipe."</p>
+                <div class="testi-author">
+                    <div class="testi-avatar" style="background:linear-gradient(135deg,#f472b6,#7b5cfa);">MH</div>
+                    <div>
+                        <div class="testi-name">Marie H.</div>
+                        <div class="testi-role">Propriétaire, Pharmacie</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="testi-card">
+                <div class="stars">⭐⭐⭐⭐⭐</div>
+                <p class="testi-text">"Design impeccable, code propre et livraison rapide. GenerateX a conçu notre identité visuelle complète et le rendu est vraiment professionnel. Je recommande vivement."</p>
+                <div class="testi-author">
+                    <div class="testi-avatar" style="background:linear-gradient(135deg,#00e5ff,#22c55e);">LN</div>
+                    <div>
+                        <div class="testi-name">Lionel N.</div>
+                        <div class="testi-role">Fondateur, Agence Marketing</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq" id="faq">
+    <div class="section-inner">
+        <div class="text-center section-header">
+            <div class="section-tag">❓ FAQ</div>
+            <h2 style="font-size:clamp(2rem,4vw,3rem); margin-bottom:16px;">
+                Questions <span class="grad-text">fréquentes</span>
+            </h2>
+        </div>
+
+        <div class="faq-list">
+            <div class="faq-item open">
+                <button class="faq-q">
+                    Quels sont vos délais de livraison ?
+                    <svg class="faq-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
                 </button>
+                <div class="faq-a">Les délais varient selon la complexité du projet. Un site vitrine peut être livré en 3 à 7 jours. Une application ou un ERP sur mesure peut prendre de 2 à 8 semaines. Nous établissons toujours un planning clair dès le départ.</div>
             </div>
-            <div class="md:-mr-16 max-md:mt-10">
-                <img class="max-w-xs md:max-w-sm" alt="" src="https://raw.githubusercontent.com/prebuiltui/prebuiltui/main/assets/trusted-brand/image-fc6e.png">
+
+            <div class="faq-item">
+                <button class="faq-q">
+                    Proposez-vous un déploiement en local (réseau interne) ?
+                    <svg class="faq-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+                </button>
+                <div class="faq-a">Oui, absolument. Nous proposons le déploiement en local sur votre réseau d'entreprise (intranet), sur serveur dédié, ou en cloud selon vos préférences. Nous configurons l'environnement complet et formons vos équipes.</div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-q">
+                    Est-ce que vous assurez la maintenance après livraison ?
+                    <svg class="faq-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+                </button>
+                <div class="faq-a">Oui. Chaque projet inclut une période de support (1 à 3 mois selon le forfait). Nous proposons aussi des contrats de maintenance mensuelle pour les mises à jour, la sécurité et les évolutions fonctionnelles.</div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-q">
+                    Peut-on modifier le logiciel après livraison ?
+                    <svg class="faq-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+                </button>
+                <div class="faq-a">Bien sûr. Nos solutions sont conçues pour évoluer. Vous pouvez nous demander des modifications, ajouts de modules ou nouvelles fonctionnalités à tout moment. Nous établissons un devis pour chaque évolution.</div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-q">
+                    Comment se passe le paiement ?
+                    <svg class="faq-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+                </button>
+                <div class="faq-a">Nous travaillons généralement avec un acompte de 50% au démarrage du projet, et le solde de 50% à la livraison finale et validation du client. Pour les grands projets, nous pouvons établir un échéancier de paiement personnalisé.</div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-q">
+                    Travaillez-vous avec des clients hors de Madagascar ?
+                    <svg class="faq-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+                </button>
+                <div class="faq-a">Oui, nous travaillons avec des clients à Madagascar et à l'international. Tout peut se faire à distance via des outils de communication modernes (WhatsApp, email, visioconférence). La livraison et le déploiement peuvent également être effectués à distance.</div>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
-    <!-- Contact Section -->
-    <section class="flex flex-col items-center" id="contact">
-        <div class="flex flex-col items-center mt-32">
-            <h2 class="text-center text-4xl font-semibold max-w-2xl">
-                Get in 
-                <span class="bg-gradient-to-t from-indigo-600 to-black p-1 bg-left inline-block bg-no-repeat">
-                    touch
-                </span>
+<!-- CONTACT -->
+<section class="contact" id="contact">
+    <div class="section-inner">
+        <div class="text-center section-header">
+            <div class="section-tag">📬 Contact</div>
+            <h2 style="font-size:clamp(2rem,4vw,3rem); margin-bottom:16px;">
+                Parlons de <span class="grad-text">votre projet</span>
             </h2>
-            <p class="text-center text-slate-400 max-w-lg mt-3">
-                A visual collection of
-                our most recent works - each piece crafted with intention, emotion, and style.</p>
+            <p style="color:var(--muted); max-width:540px; margin:0 auto;">
+                Décrivez-nous votre besoin. Nous vous répondons dans les 24h avec une proposition adaptée.
+            </p>
         </div>
-        <form class="grid sm:grid-cols-2 gap-3 sm:gap-5 max-w-3xl mx-auto text-slate-400 mt-16 w-full">
-            <div>
-                <label class="font-medium text-slate-200">
-                    Your name
-                </label>
-                <input placeholder="Enter your name" class="w-full mt-2 p-3 outline-none border border-slate-700 rounded-lg focus-within:ring-1 transition focus:ring-indigo-600" type="text" name="name">
-            </div>
-            <div>
-                <label class="font-medium text-slate-200">
-                    Email id
-                </label>
-                <input placeholder="Enter your email" class="w-full mt-2 p-3 outline-none border border-slate-700 rounded-lg focus-within:ring-1 transition focus:ring-indigo-600" type="email" name="email">
-            </div>
-            <div class="sm:col-span-2">
-                <label class="font-medium text-slate-200">Message</label>
-                <textarea name="message" rows="8" placeholder="Enter your message" class="resize-none w-full mt-2 p-3 outline-none rounded-lg focus-within:ring-1 transition focus:ring-indigo-600 border border-slate-700"></textarea>
-            </div>
-            <button type="submit" class="w-max flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-3 rounded-full">
-                Submit
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-up-right size-4.5" aria-hidden="true">
-                    <path d="M7 7h10v10"></path>
-                    <path d="M7 17 17 7"></path>
-                </svg>
-            </button>
-        </form>
-    </section>
 
-    <!-- Subscribe Section -->
-    <section class="flex flex-col items-center">
-        <div class="flex flex-col items-center mt-32">
-            <h2 class="text-center text-4xl font-semibold max-w-2xl">Subscribe 
-                <span class="bg-gradient-to-t from-indigo-600 to-black p-1 bg-left inline-block bg-no-repeat">newsletter</span></h2>
-            <p class="text-center text-slate-400 max-w-lg mt-3">A visual collection of
-                our most recent works - each piece crafted with intention, emotion, and style.</p>
-        </div>
-        <div class="flex items-center justify-center mt-10 border border-slate-700 focus-within:outline focus-within:outline-indigo-600 text-sm rounded-full h-14 max-w-xl w-full">
-            <input class="bg-transparent outline-none rounded-full px-4 h-full flex-1 placeholder:text-slate-400" placeholder="Enter your email address" type="text">
-            <button class="bg-indigo-600 text-white rounded-full h-11 mr-1 px-10 flex items-center justify-center hover:bg-indigo-700 active:scale-95 transition">
-                Subscribe
-            </button>
-        </div>
-    </section>
-
-    <!-- Footer Section -->
-    <footer class="px-6 md:px-16 lg:px-24 xl:px-32 w-full text-sm text-slate-400 mt-40">
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-14">
-            <div class="sm:col-span-2 lg:col-span-1">
-                <a href="https://prebuiltui.com?utm_source=agentix">
-                <img class="h-9 w-auto" width="138" height="36" alt="logo" src="./assets/logo.svg"></a>
-                <p class="text-sm/7 mt-6">
-                    PrebuiltUI is a free and open-source UI component library with over 300+
-                    beautifully crafted, customizable components built with Tailwind CSS.
-                </p>
-            </div>
-            <div class="flex flex-col lg:items-center lg:justify-center">
-                <div class="flex flex-col text-sm space-y-2.5">
-                    <h2 class="font-semibold mb-5 text-white">Company</h2>
-                    <a class="hover:text-slate-500 transition" href="#">
-                        About us
-                    </a>
-                    <a class="hover:text-slate-500 transition" href="#">
-                        Careers <span class="text-xs text-white bg-indigo-600 rounded-md ml-2 px-2 py-1">We’re hiring!</span>
-                    </a>
-                    <a class="hover:text-slate-500 transition" href="#">
-                        Contact us
-                    </a>
-                    <a class="hover:text-slate-500 transition" href="#">
-                        Privacy policy
-                    </a>
-                </div>
-            </div>
-            <div>
-                <h2 class="font-semibold text-white mb-5">Subscribe to our newsletter</h2>
-                <div class="text-sm space-y-6 max-w-sm">
-                    <p>The latest news, articles, and resources, sent to your inbox weekly.</p>
-                    <div class="flex items-center justify-center gap-2 p-2 rounded-md bg-slate-900">
-                        <input class="outline-none w-full max-w-64 py-2 rounded px-2" placeholder="Enter your email" type="email">
-                        <button class="bg-indigo-600 px-4 py-2 text-white rounded">
-                            Subscribe
-                        </button>
+        <div class="contact-wrapper">
+            <div class="contact-info">
+                <h3>Contactez-nous directement</h3>
+                <p>Notre équipe est disponible pour répondre à toutes vos questions et vous accompagner dans votre projet digital.</p>
+                
+                <div class="contact-items">
+                    <div class="contact-item">
+                        <div class="contact-item-icon">📞</div>
+                        <div class="contact-item-text">
+                            <div class="contact-item-label">Téléphone / WhatsApp</div>
+                            <div class="contact-item-value"><a href="tel:+261381226663">+261 38 12 266 63</a></div>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-item-icon">✉️</div>
+                        <div class="contact-item-text">
+                            <div class="contact-item-label">Email</div>
+                            <div class="contact-item-value"><a href="mailto:mihajarabemiafara12@gmail.com">mihajarabemiafara12@gmail.com</a></div>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-item-icon">🌍</div>
+                        <div class="contact-item-text">
+                            <div class="contact-item-label">Zone d'intervention</div>
+                            <div class="contact-item-value">Madagascar & International</div>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-item-icon">⏰</div>
+                        <div class="contact-item-text">
+                            <div class="contact-item-label">Disponibilité</div>
+                            <div class="contact-item-value">Lundi – Samedi, 8h – 20h</div>
+                        </div>
                     </div>
                 </div>
+
+                <!-- Quick WhatsApp -->
+                <a href="https://wa.me/261381226663?text=Bonjour%20GenerateX%2C%20je%20souhaite%20discuter%20d'un%20projet." 
+                   target="_blank" rel="noopener"
+                   style="display:inline-flex;align-items:center;gap:10px;margin-top:32px;background:#25D366;color:#fff;padding:14px 24px;border-radius:12px;text-decoration:none;font-weight:700;transition:opacity .2s;">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                    Écrire sur WhatsApp
+                </a>
+            </div>
+
+            <form class="contact-form" onsubmit="handleSubmit(event)">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="name">Votre nom</label>
+                        <input id="name" type="text" class="form-input" placeholder="Jean Dupont" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input id="email" type="email" class="form-input" placeholder="jean@example.com" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="phone">Téléphone (optionnel)</label>
+                    <input id="phone" type="tel" class="form-input" placeholder="+261 XX XXX XXXX">
+                </div>
+                <div class="form-group">
+                    <label for="service">Type de service</label>
+                    <select id="service" class="form-input">
+                        <option value="">Choisissez un service...</option>
+                        <option>Site vitrine / institutionnel</option>
+                        <option>E-commerce</option>
+                        <option>ERP / Logiciel de gestion</option>
+                        <option>Logiciel POS</option>
+                        <option>Application personnalisée</option>
+                        <option>Design graphique</option>
+                        <option>Montage vidéo</option>
+                        <option>Support informatique</option>
+                        <option>Autre / À définir</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="message">Décrivez votre projet</label>
+                    <textarea id="message" class="form-input" placeholder="Décrivez vos besoins, contraintes, délais souhaités..." required></textarea>
+                </div>
+                <button type="submit" class="btn-primary" style="align-self:flex-start;padding:14px 36px;">
+                    Envoyer ma demande
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 7h10v10M7 17 17 7"/></svg>
+                </button>
+                <div id="form-success" style="display:none;color:#22c55e;font-size:0.9rem;margin-top:8px;">
+                    ✅ Message envoyé avec succès ! Nous vous répondrons sous 24h.
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+
+<!-- NEWSLETTER -->
+<section class="newsletter">
+    <div class="section-inner">
+        <div class="newsletter-box">
+            <div class="section-tag" style="display:inline-flex;">📩 Newsletter</div>
+            <h2 style="margin-top:16px;">Restez dans la <span class="grad-text">boucle</span></h2>
+            <p>Conseils digitaux, nouvelles fonctionnalités, offres exclusives — directement dans votre boîte mail.</p>
+            <div class="newsletter-form">
+                <input type="email" placeholder="Entrez votre adresse email...">
+                <button type="button">S'abonner</button>
             </div>
         </div>
-        <p class="py-4 text-center border-t mt-6 border-slate-700">
-            Copyright 2025 © <a href="https://prebuiltui.com/">PrebuiltUI</a> All Right Reserved. Distributed by <a href="https://themewagon.com/" target="_blank">ThemeWagon</a>
-        </p>
-    </footer>
-    <script src="./script.js"></script>
-</body>
+    </div>
+</section>
 
+<!-- FOOTER -->
+<footer>
+    <div class="footer-grid">
+        <div class="footer-brand">
+            <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:1.5rem;display:flex;align-items:center;gap:8px;">
+                <div style="width:32px;height:32px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;color:#000;">GX</div>
+                Generate<span style="color:var(--accent);">X</span>
+            </div>
+            <p>Agence digitale spécialisée dans la création de solutions web, ERP, POS, applications et contenus créatifs sur mesure. <em>Everything is Possible.</em></p>
+            <div class="footer-socials">
+                <a class="social-link" href="https://wa.me/261381226663" target="_blank" title="WhatsApp">💬</a>
+                <a class="social-link" href="mailto:mihajarabemiafara12@gmail.com" title="Email">✉️</a>
+                <a class="social-link" href="#" title="Facebook">f</a>
+                <a class="social-link" href="#" title="LinkedIn">in</a>
+            </div>
+        </div>
+
+        <div class="footer-col">
+            <h4>Services</h4>
+            <ul>
+                <li><a href="#services">Sites Web</a></li>
+                <li><a href="#services">ERP & Gestion</a></li>
+                <li><a href="#services">Logiciels POS</a></li>
+                <li><a href="#services">Applications</a></li>
+                <li><a href="#services">Design Graphique</a></li>
+                <li><a href="#services">Montage Vidéo</a></li>
+            </ul>
+        </div>
+
+        <div class="footer-col">
+            <h4>Entreprise</h4>
+            <ul>
+                <li><a href="#process">Notre méthode</a></li>
+                <li><a href="#portfolio">Portfolio</a></li>
+                <li><a href="#pricing">Tarifs</a></li>
+                <li><a href="#testimonials">Témoignages</a></li>
+                <li><a href="#faq">FAQ</a></li>
+            </ul>
+        </div>
+
+        <div class="footer-col">
+            <h4>Contact</h4>
+            <ul>
+                <li><a href="tel:+261381226663">+261 38 12 266 63</a></li>
+                <li><a href="mailto:mihajarabemiafara12@gmail.com">mihajarabemiafara12@gmail.com</a></li>
+                <li><a href="https://wa.me/261381226663">WhatsApp</a></li>
+                <li style="color:var(--muted);font-size:0.85rem;padding-top:8px;">Madagascar & International</li>
+                <li style="color:var(--muted);font-size:0.85rem;">Lun–Sam, 8h–20h</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="footer-bottom">
+        <span>© 2025 GenerateX. Tous droits réservés. — <em>Everything is Possible</em></span>
+        <span>Conçu & développé par <strong style="color:var(--accent);">GenerateX</strong> 🇲🇬</span>
+    </div>
+</footer>
+
+<!-- CHAT FAB -->
+<button class="chat-fab" id="chat-fab" title="Nous contacter">💬</button>
+<div class="chat-popup" id="chat-popup">
+    <h4>Besoin d'aide ? 👋</h4>
+    <p>Notre équipe est disponible pour répondre à vos questions sur WhatsApp.</p>
+    <a class="chat-btn" href="https://wa.me/261381226663?text=Bonjour%20GenerateX%2C%20j'ai%20une%20question." target="_blank" rel="noopener">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        Écrire sur WhatsApp
+    </a>
+</div>
+
+<script>
+    // Mobile menu
+    const menuBtn = document.getElementById('menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const closeMenu = document.getElementById('close-menu');
+
+    menuBtn.addEventListener('click', () => mobileMenu.classList.add('open'));
+    closeMenu.addEventListener('click', () => mobileMenu.classList.remove('open'));
+    document.querySelectorAll('.mobile-link').forEach(link => {
+        link.addEventListener('click', () => mobileMenu.classList.remove('open'));
+    });
+
+    // FAQ accordion
+    document.querySelectorAll('.faq-q').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const item = btn.closest('.faq-item');
+            const isOpen = item.classList.contains('open');
+            document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+            if (!isOpen) item.classList.add('open');
+        });
+    });
+
+    // Portfolio tabs (visual only)
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        });
+    });
+
+    // Chat FAB toggle
+    const chatFab = document.getElementById('chat-fab');
+    const chatPopup = document.getElementById('chat-popup');
+    chatFab.addEventListener('click', () => chatPopup.classList.toggle('show'));
+
+    // Form submit
+    function handleSubmit(e) {
+        e.preventDefault();
+        const btn = e.target.querySelector('button[type="submit"]');
+        btn.textContent = 'Envoi en cours...';
+        btn.disabled = true;
+        setTimeout(() => {
+            btn.textContent = '✅ Envoyé !';
+            document.getElementById('form-success').style.display = 'block';
+            e.target.reset();
+            setTimeout(() => {
+                btn.textContent = 'Envoyer ma demande →';
+                btn.disabled = false;
+                document.getElementById('form-success').style.display = 'none';
+            }, 4000);
+        }, 1200);
+    }
+
+    // Scroll animation
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+            }
+        });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.service-card, .testi-card, .pricing-card, .process-step, .portfolio-card').forEach(el => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(30px)';
+        el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+        observer.observe(el);
+    });
+
+    // Newsletter button feedback
+    document.querySelector('.newsletter-form button').addEventListener('click', function() {
+        const input = this.previousElementSibling;
+        if (input.value && input.value.includes('@')) {
+            this.textContent = '✅ Abonné !';
+            input.value = '';
+            setTimeout(() => { this.textContent = "S'abonner"; }, 3000);
+        }
+    });
+</script>
+</body>
 </html>
