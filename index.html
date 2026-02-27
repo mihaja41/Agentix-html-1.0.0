@@ -638,7 +638,27 @@
             .process-steps { grid-template-columns: 1fr; }
             .pricing-grid { grid-template-columns: 1fr; }
         }
+/* ✅ CORRECTION RESPONSIVE POUR .NAV-CTA */
+@media (max-width: 1024px) {
+    .nav-cta .btn-ghost,
+    .nav-cta .btn-primary {
+        padding: 8px 14px !important;
+        font-size: 0.8rem !important;
+    }
+    .nav-cta {
+        gap: 6px !important;
+    }
+}
+
+@media (max-width: 768px) {
+    .nav-cta {
+        display: none !important; /* Caché sur mobile (menu hamburger) */
+    }
+}
+
     </style>
+
+    
 </head>
 <body>
 
